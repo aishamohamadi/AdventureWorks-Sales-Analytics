@@ -1,0 +1,21 @@
+# SQL Server database files
+*.mdf
+*.ndf
+*.ldf
+
+# Backup files
+*.bak
+
+# Local environment files
+.env
+
+# VS Code
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+
+# Power BI temporary/lock files
+*.pbi-tools/
+~$*
