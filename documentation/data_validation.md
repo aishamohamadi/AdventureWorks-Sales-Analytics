@@ -1,21 +1,38 @@
 # Data Validation
 
-## 1. Row Count Validation
+## 1. Validation Scope
 
-The database contains 760,837 rows across its tables.
+Validation was performed on the core analytical tables used for the
+sales analysis:
 
-The core sales tables contain:
+- Sales.SalesOrderHeader
+- Sales.SalesOrderDetail
+- Sales.Customer
+- Sales.SalesTerritory
+- Production.Product
 
-- 121,317 sales order lines
-- 31,465 sales orders
-- 19,119 customers
-- 266 products appearing in sales
-- 10 sales territories
+The validation focused on key relationships, NULL values, and
+referential integrity.
 
+---
 
-## 2. NULL Validation
+## 2. Row Count Validation
 
-The following key columns were checked:
+The following row counts were confirmed for the core analytical tables:
+
+| Table | Row Count |
+|---|---:|
+| SalesOrderDetail | 121,317 |
+| SalesOrderHeader | 31,465 |
+| Customer | 19,119 |
+| Product | 2,016 |
+| SalesTerritory | 10 |
+
+---
+
+## 3. NULL Validation
+
+The following key foreign key columns were checked:
 
 | Table | Column | NULL Records |
 |---|---|---:|
@@ -24,19 +41,45 @@ The following key columns were checked:
 | SalesOrderHeader | CustomerID | 0 |
 | SalesOrderHeader | TerritoryID | 0 |
 
+No NULL values were identified in these key analytical relationship
+columns.
 
-## 3. Referential Integrity
+---
 
-SalesOrderDetail → SalesOrderHeader
+## 4. Referential Integrity
 
-Orphan records: 0
+The following relationships were explicitly checked:
 
-SalesOrderDetail → Product
+| Relationship | Orphan Records |
+|---|---:|
+| SalesOrderDetail → SalesOrderHeader | 0 |
+| SalesOrderDetail → Product | 0 |
 
-Orphan records: 0
+No orphan records were identified in the tested relationships.
 
+---
 
-## 4. Validation Conclusion
+## 5. Primary and Foreign Key Structure
 
-The primary analytical relationships required for the sales analysis
-were validated successfully before proceeding to business analysis.
+Primary and foreign key metadata was inspected to confirm the database
+relationships used in the analytical model.
+
+Key relationships include:
+
+- SalesOrderHeader.SalesOrderID → SalesOrderDetail.SalesOrderID
+- Customer.CustomerID → SalesOrderHeader.CustomerID
+- SalesTerritory.TerritoryID → SalesOrderHeader.TerritoryID
+- Product.ProductID → SalesOrderDetail.ProductID
+
+---
+
+## 6. Validation Conclusion
+
+The core analytical relationships and key fields were validated
+successfully.
+
+No NULL values were identified in the tested foreign key columns, and
+no orphan records were identified in the tested relationships.
+
+The validated dataset was considered suitable for proceeding to
+business analysis.
