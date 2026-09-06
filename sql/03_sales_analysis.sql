@@ -16,6 +16,9 @@ Business Questions:
 
 4. Which customers contribute the most revenue, and how concentrated is revenue among customers?
 
+5. How does sales performance vary across sales territories?
+
+6. How are discounts associated with sales volume and revenue?
 =========================================================
 */
 
@@ -71,14 +74,14 @@ ORDER BY
 
 
 -- =====================================================
--- Question 2: Top Products by Sales Revenue and Volume
+-- Question 2A: Top Products by Sales Revenue
 -- =====================================================
 
-SELECT
+SELECT TOP 10
     p.ProductID,
     p.Name AS ProductName,
     SUM(d.OrderQty) AS UnitsSold,
-    SUM(d.LineTotal) AS TotalSales,
+    ROUND(SUM(d.LineTotal), 2) AS TotalSales,
     COUNT(DISTINCT d.SalesOrderID) AS OrderCount
 
 FROM Sales.SalesOrderDetail AS d
@@ -95,7 +98,31 @@ ORDER BY
 
 
 -- =====================================================
--- Question 3: Sales by Product Category & Subcategory
+-- Question 2B: Top Products by Sales Volume
+-- =====================================================
+
+SELECT TOP 10
+    p.ProductID,
+    p.Name AS ProductName,
+    SUM(d.OrderQty) AS UnitsSold,
+    ROUND(SUM(d.LineTotal), 2) AS TotalSales,
+    COUNT(DISTINCT d.SalesOrderID) AS OrderCount
+
+FROM Sales.SalesOrderDetail AS d
+
+INNER JOIN Production.Product AS p
+    ON d.ProductID = p.ProductID
+
+GROUP BY
+    p.ProductID,
+    p.Name
+
+ORDER BY
+    UnitsSold DESC;
+
+
+-- =====================================================
+-- Question 3A: Sales by Product Category & Subcategory
 -- =====================================================
 
 SELECT
@@ -172,7 +199,7 @@ ORDER BY
 
 
 -- =====================================================
--- Question 4: Top Customers by Sales Revenue
+-- Question 4A: Top Customers by Sales Revenue
 -- =====================================================
 
 SELECT TOP 20
@@ -282,3 +309,241 @@ SELECT
     ) AS CustomersToReach90Pct
 
 FROM CustomerPareto;
+
+
+-- =====================================================
+-- Question 5A: Territory Performance
+-- =====================================================
+
+SELECT
+    st.TerritoryID,
+    st.Name AS TerritoryName,
+    COUNT(DISTINCT h.SalesOrderID) AS OrderCount,
+    COUNT(DISTINCT h.CustomerID) AS CustomerCount,
+    SUM(d.OrderQty) AS UnitsSold,
+    ROUND(SUM(d.LineTotal), 2) AS TotalSales,
+
+    ROUND(
+        SUM(d.LineTotal)
+        / NULLIF(COUNT(DISTINCT h.SalesOrderID), 0),
+        2
+    ) AS AverageOrderValue
+
+FROM Sales.SalesOrderHeader AS h
+
+INNER JOIN Sales.SalesOrderDetail AS d
+    ON h.SalesOrderID = d.SalesOrderID
+
+INNER JOIN Sales.SalesTerritory AS st
+    ON h.TerritoryID = st.TerritoryID
+
+GROUP BY
+    st.TerritoryID,
+    st.Name
+
+ORDER BY
+    TotalSales DESC;
+
+
+-- =====================================================
+-- Question 5B: Sales Share by Territory
+-- =====================================================
+
+WITH TerritorySales AS
+(
+    SELECT
+        st.TerritoryID,
+        st.Name AS TerritoryName,
+        SUM(d.LineTotal) AS TotalSales
+
+    FROM Sales.SalesOrderHeader AS h
+
+    INNER JOIN Sales.SalesOrderDetail AS d
+        ON h.SalesOrderID = d.SalesOrderID
+
+    INNER JOIN Sales.SalesTerritory AS st
+        ON h.TerritoryID = st.TerritoryID
+
+    GROUP BY
+        st.TerritoryID,
+        st.Name
+)
+
+SELECT
+    TerritoryName,
+    ROUND(TotalSales, 2) AS TotalSales,
+
+    ROUND(
+        TotalSales
+        / SUM(TotalSales) OVER () * 100,
+        2
+    ) AS RevenueSharePct
+
+FROM TerritorySales
+
+ORDER BY
+    TotalSales DESC;
+
+
+-- =====================================================
+-- Question 5C: Territory Sales, Order Volume & AOV
+-- =====================================================
+
+SELECT
+    st.TerritoryID,
+    st.Name AS TerritoryName,
+    COUNT(DISTINCT h.SalesOrderID) AS OrderCount,
+    SUM(d.OrderQty) AS UnitsSold,
+    ROUND(SUM(d.LineTotal), 2) AS TotalSales,
+
+    ROUND(
+        SUM(d.LineTotal)
+        / NULLIF(COUNT(DISTINCT h.SalesOrderID), 0),
+        2
+    ) AS AverageOrderValue,
+
+    ROUND(
+        SUM(d.LineTotal)
+        / NULLIF(SUM(d.OrderQty), 0),
+        2
+    ) AS AverageSalesPerUnit
+
+FROM Sales.SalesOrderHeader AS h
+
+INNER JOIN Sales.SalesOrderDetail AS d
+    ON h.SalesOrderID = d.SalesOrderID
+
+INNER JOIN Sales.SalesTerritory AS st
+    ON h.TerritoryID = st.TerritoryID
+
+GROUP BY
+    st.TerritoryID,
+    st.Name
+
+ORDER BY
+    TotalSales DESC;
+
+
+-- =====================================================
+-- Question 6A: Discount-Related Sales Patterns
+-- =====================================================
+
+SELECT
+    d.UnitPriceDiscount,
+    COUNT(*) AS SalesLineCount,
+    SUM(d.OrderQty) AS UnitsSold,
+    ROUND(SUM(d.LineTotal), 2) AS NetSales
+
+FROM Sales.SalesOrderDetail AS d
+
+GROUP BY
+    d.UnitPriceDiscount
+
+ORDER BY
+    d.UnitPriceDiscount;
+
+
+-- =====================================================
+-- Question 6B Validation: Multiple Discount Levels per Order
+-- =====================================================
+
+-- Validation check:
+-- Some orders contain multiple discount levels.
+-- Therefore, an order should not be classified using
+-- MAX(UnitPriceDiscount).
+
+SELECT
+    SalesOrderID,
+    COUNT(DISTINCT UnitPriceDiscount) AS DiscountLevelCount
+
+FROM Sales.SalesOrderDetail
+
+GROUP BY
+    SalesOrderID
+
+HAVING
+    COUNT(DISTINCT UnitPriceDiscount) > 1
+
+ORDER BY
+    DiscountLevelCount DESC;
+
+
+-- =====================================================
+-- Question 6C: Discount Amount and Net Sales by Discount Level
+-- =====================================================
+
+SELECT
+    d.UnitPriceDiscount AS DiscountRate,
+    COUNT(*) AS SalesLineCount,
+    SUM(d.OrderQty) AS UnitsSold,
+
+    ROUND(
+        SUM(d.UnitPrice * d.OrderQty),
+        2
+    ) AS GrossSales,
+
+    ROUND(
+        SUM(
+            d.UnitPrice
+            * d.OrderQty
+            * d.UnitPriceDiscount
+        ),
+        2
+    ) AS DiscountAmount,
+
+    ROUND(
+        SUM(d.LineTotal),
+        2
+    ) AS NetSales
+
+FROM Sales.SalesOrderDetail AS d
+
+GROUP BY
+    d.UnitPriceDiscount
+
+ORDER BY
+    d.UnitPriceDiscount;
+
+
+-- =====================================================
+-- Question 6D: Discounted vs Non-Discounted Sales
+-- =====================================================
+
+SELECT
+    CASE
+        WHEN d.UnitPriceDiscount = 0 THEN 'No Discount'
+        ELSE 'Discounted'
+    END AS DiscountStatus,
+
+    COUNT(*) AS SalesLineCount,
+    SUM(d.OrderQty) AS UnitsSold,
+
+    ROUND(
+        SUM(d.UnitPrice * d.OrderQty),
+        2
+    ) AS GrossSales,
+
+    ROUND(
+        SUM(
+            d.UnitPrice
+            * d.OrderQty
+            * d.UnitPriceDiscount
+        ),
+        2
+    ) AS DiscountAmount,
+
+    ROUND(
+        SUM(d.LineTotal),
+        2
+    ) AS NetSales
+
+FROM Sales.SalesOrderDetail AS d
+
+GROUP BY
+    CASE
+        WHEN d.UnitPriceDiscount = 0 THEN 'No Discount'
+        ELSE 'Discounted'
+    END
+
+ORDER BY
+    DiscountStatus;

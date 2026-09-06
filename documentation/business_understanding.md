@@ -18,7 +18,7 @@ The analysis focuses on sales performance across products, product categories an
 
 A business needs to understand its sales performance, identify the main contributors to revenue, and recognize areas that may require further investigation.
 
-The available transactional data contains information about sales orders, order details, customers, products, product categories, and sales territories. However, raw transactional data alone does not provide clear answers to questions such as:
+The available transactional data contains information about sales orders, order details, customers, products, and sales territories. However, raw transactional data alone does not provide clear answers to questions such as:
 
 * How has sales performance changed over time?
 * Which products and product categories generate the most revenue?
@@ -34,9 +34,9 @@ This project aims to transform the available transactional data into structured 
 
 The main objective is to analyze historical sales performance, identify important revenue patterns and concentration areas, and provide evidence-based business insights.
 
-The analysis uses SQL Server and T-SQL for data exploration, validation, transformation, and analytical querying, followed by visualization and business interpretation.
+The analysis uses SQL Server and T-SQL for data exploration, validation, transformation, and analytical querying. Validated results are then documented as business insights and will support subsequent visualization and presentation.
 
-The project will progressively examine:
+The project examines:
 
 * Sales performance over time
 * Product performance
@@ -87,7 +87,7 @@ Which customers contribute the most revenue, and how concentrated is revenue amo
 
 How does sales performance vary across sales territories?
 
-**Status:** Planned
+**Status:** Analyzed
 
 ---
 
@@ -95,7 +95,7 @@ How does sales performance vary across sales territories?
 
 How are discounts associated with sales volume and revenue?
 
-**Status:** Planned
+**Status:** Analyzed
 
 ---
 
@@ -137,8 +137,8 @@ How are discounts associated with sales volume and revenue?
 
 The analysis is expected to identify:
 
-* High-performing products
-* High-performing product categories and subcategories
+* High-revenue and high-volume products
+* High-revenue product categories and subcategories
 * High-value customers
 * Customer revenue concentration patterns
 * Important sales trends
@@ -161,10 +161,7 @@ The project is being developed incrementally.
 * Product category and subcategory performance
 * Customer performance
 * Customer revenue concentration
+* Territory performance
+* Discount-related sales patterns
 
-### Planned Analysis
-
-* Sales territory performance
-* Discount-related sales analysis
-
-Insights and recommendations will be expanded as each planned analysis is completed and validated.
+The core descriptive sales analysis is now complete. Further work will focus on consolidating validated insights, documenting business implications, and preparing the project for presentation and visualization.

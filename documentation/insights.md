@@ -2,14 +2,16 @@
 
 ## 1. Overview
 
-The initial sales analysis was conducted using AdventureWorks2022 transactional data.
+The sales analysis was conducted using AdventureWorks2022 transactional data.
 
-The analysis currently covers:
+The analysis covers:
 
 * Sales performance over time
 * Product-level sales performance
 * Product category and subcategory performance
 * Customer revenue concentration
+* Sales territory performance
+* Discount-related sales patterns
 
 The insights below are based on the SQL analysis results and are descriptive in nature. They do not imply causation.
 
@@ -37,8 +39,6 @@ Sales performance changed substantially across the analyzed period from 2011 to 
 
 ### Business Interpretation
 
-The results indicate a substantial change in sales activity across the analyzed period.
-
 The increase in sales through 2013 was accompanied by a significant increase in order volume, while Average Order Value declined after 2012. This pattern suggests that higher transaction volume was an important component of sales growth through 2013.
 
 The sharp decline in 2014 should be investigated further to determine whether it is associated with changes in sales activity, customer activity, product mix, or other business factors.
@@ -47,9 +47,9 @@ The sharp decline in 2014 should be investigated further to determine whether it
 
 ## 3. Product Performance
 
-Product-level analysis shows that several individual products generated substantially higher sales revenue than others.
+Product-level analysis was evaluated using two complementary measures: **sales revenue** and **sales volume**.
 
-The highest-revenue products were:
+### Top Products by Sales Revenue
 
 | Rank | Product                 | Units Sold |  Total Sales |
 | ---: | ----------------------- | ---------: | -----------: |
@@ -59,18 +59,34 @@ The highest-revenue products were:
 |    4 | Mountain-200 Silver, 42 |      2,234 | 3,438,478.86 |
 |    5 | Mountain-200 Silver, 46 |      2,216 | 3,434,256.94 |
 
+### Top Products by Sales Volume
+
+| Rank | Product                         | Units Sold | Total Sales |
+| ---: | ------------------------------- | ---------: | ----------: |
+|    1 | AWC Logo Cap                    |      8,311 |   51,229.45 |
+|    2 | Water Bottle - 30 oz.           |      6,815 |   28,654.16 |
+|    3 | Sport-100 Helmet, Blue          |      6,743 |  165,406.62 |
+|    4 | Long-Sleeve Logo Jersey, L      |      6,592 |  198,754.98 |
+|    5 | Sport-100 Helmet, Black         |      6,532 |  160,869.52 |
+|    6 | Sport-100 Helmet, Red           |      6,266 |  157,772.39 |
+|    7 | Classic Vest, S                 |      4,247 |  156,398.07 |
+|    8 | Patch Kit/8 Patches             |      3,865 |    8,232.60 |
+|    9 | Short-Sleeve Classic Jersey, XL |      3,864 |  129,145.57 |
+|   10 | Long-Sleeve Logo Jersey, M      |      3,636 |  115,249.21 |
+
 ### Key Observations
 
-* The highest-revenue products include several variants from the **Mountain-200** product line.
-* The top product generated approximately **4.40M** in sales.
-* Several variants from the Mountain-200 and Road-250 product lines appear among the highest-revenue products.
-* Sales revenue is not determined by unit volume alone. Products with high unit sales do not necessarily generate the highest total revenue.
+* **Mountain-200 Black, 38** generated the highest sales revenue among individual products, at approximately **4.40M**.
+* The top six products by sales revenue were all variants of the **Mountain-200** product line.
+* **AWC Logo Cap** recorded the highest sales volume, with **8,311 units sold**, despite generating approximately **51.23K** in sales revenue.
+* The products with the highest sales volume were substantially different from those generating the highest sales revenue.
+* For example, Mountain-200 Black, 38 generated approximately **4.40M** from 2,977 units, while AWC Logo Cap generated approximately **51.23K** from 8,311 units.
 
 ### Business Interpretation
 
-The results show that high-revenue bicycle products make a substantial contribution to sales performance.
+The results demonstrate that **sales revenue and sales volume capture different dimensions of product performance**.
 
-Product-level analysis should therefore consider both **sales revenue and sales volume**, since these measures capture different aspects of product performance.
+High-volume products do not necessarily generate the highest revenue, while products with lower unit volumes can generate substantially higher sales revenue. Product performance should therefore be evaluated using both measures rather than relying on unit volume alone.
 
 ---
 
@@ -103,21 +119,21 @@ The Bikes category represents the dominant source of sales revenue in the analyz
 
 Within Bikes, Road Bikes and Mountain Bikes are the strongest revenue-generating subcategories.
 
-This revenue concentration means that changes in demand for core bicycle products could have a substantial effect on overall sales performance. Further analysis is required to understand the underlying drivers of this concentration.
+This revenue concentration indicates that changes in the performance of core bicycle products could have a substantial effect on overall sales performance. Further analysis is required to understand the underlying drivers of this concentration.
 
 ---
 
 ## 5. Customer Revenue Concentration
 
-Customer-level analysis indicates a high concentration of revenue among a relatively small portion of the customer base.
+Customer-level analysis indicates a high concentration of revenue among a relatively small portion of the customers with recorded sales.
 
-The cumulative revenue analysis shows:
+| Revenue Threshold Reached | Customers Required | Share of 19,119 Customers with Sales |
+| ------------------------: | -----------------: | -----------------------------------: |
+|                       50% |                133 |                               ~0.70% |
+|                       80% |              1,607 |                               ~8.41% |
+|                       90% |              3,947 |                              ~20.65% |
 
-| Revenue Threshold Reached | Customers Required | Share of 19,119 Customers |
-| ------------------------: | -----------------: | ------------------------: |
-|                       50% |                133 |                    ~0.70% |
-|                       80% |              1,607 |                    ~8.41% |
-|                       90% |              3,947 |                   ~20.65% |
+There are **19,119 customers with recorded sales**, compared with **19,820 total customers** in the `Sales.Customer` table. Therefore, **701 registered customers had no recorded sales** in the analyzed transactional data.
 
 ### Key Observations
 
@@ -128,7 +144,7 @@ The cumulative revenue analysis shows:
 
 ### Business Interpretation
 
-Revenue is highly concentrated among a relatively small group of customers.
+Revenue is highly concentrated among a relatively small group of customers with recorded sales.
 
 This concentration highlights the importance of understanding the purchasing behavior of high-revenue customers. At the same time, the degree of concentration may represent a potential business risk if overall sales are heavily dependent on a limited portion of the customer base.
 
@@ -136,9 +152,88 @@ Further customer segmentation would be useful before developing customer-specifi
 
 ---
 
-## 6. Initial Business Implications
+## 6. Territory Performance
 
-Based on the current analysis, several areas should receive further investigation:
+Sales performance varies substantially across sales territories.
+
+| Territory      | Orders | Units Sold |   Total Sales | Revenue Share |       AOV |
+| -------------- | -----: | ---------: | ------------: | ------------: | --------: |
+| Southwest      |  6,224 |     59,105 | 24,184,609.60 |        22.02% |  3,885.70 |
+| Canada         |  4,067 |     49,381 | 16,355,770.45 |        14.89% |  4,021.58 |
+| Northwest      |  4,594 |     36,776 | 16,084,942.55 |        14.64% |  3,501.29 |
+| Australia      |  6,843 |     18,293 | 10,655,335.96 |         9.70% |  1,557.11 |
+| Central        |    385 |     19,493 |  7,909,009.01 |         7.20% | 20,542.88 |
+| Southeast      |    486 |     18,875 |  7,879,655.07 |         7.17% | 16,213.28 |
+| United Kingdom |  3,219 |     20,099 |  7,670,721.04 |         6.98% |  2,382.95 |
+| France         |  2,672 |     19,906 |  7,251,555.65 |         6.60% |  2,713.91 |
+| Northeast      |    352 |     19,843 |  6,939,374.48 |         6.32% | 19,714.13 |
+| Germany        |  2,623 |     13,143 |  4,915,407.60 |         4.47% |  1,873.96 |
+
+### Key Observations
+
+* **Southwest** generated the highest sales revenue, accounting for **22.02%** of total sales.
+* Southwest, Canada, and Northwest collectively contributed **51.55%** of total sales revenue.
+* **Australia** recorded the highest number of orders at **6,843**, but ranked fourth in total sales revenue.
+* Several territories recorded substantially higher Average Order Values despite having relatively fewer orders.
+* Sales revenue, order volume, and Average Order Value do not always move together.
+
+### Business Interpretation
+
+Territory performance differs depending on the metric being considered.
+
+Southwest is the largest territory by sales revenue, while Australia has the highest order volume. Central, Southeast, and Northeast show relatively high Average Order Values despite having substantially fewer orders.
+
+These differences identify territories that may warrant further investigation, but the current analysis does not establish the reasons behind the observed differences.
+
+---
+
+## 7. Discount-Related Sales Patterns
+
+Discount analysis was performed at the sales-line level because individual sales orders can contain multiple discount levels.
+
+### Discount Level Distribution
+
+| Discount Rate | Sales Lines | Units Sold |      Net Sales |
+| ------------: | ----------: | ---------: | -------------: |
+|            0% |     118,035 |    241,095 | 104,423,692.40 |
+|            2% |       1,310 |     16,063 |   2,891,221.68 |
+|            5% |         606 |     10,713 |   1,037,643.33 |
+|           10% |         178 |      2,813 |     131,597.36 |
+|           15% |         590 |      2,326 |     454,082.08 |
+|           20% |         231 |        762 |     581,331.63 |
+|           30% |          61 |        304 |      49,986.08 |
+|           35% |         137 |        456 |     250,927.70 |
+|           40% |         169 |        382 |      25,899.14 |
+
+### Discounted vs Non-Discounted Sales
+
+| Discount Status | Sales Lines | Units Sold |    Gross Sales | Discount Amount |      Net Sales |
+| --------------- | ----------: | ---------: | -------------: | --------------: | -------------: |
+| No Discount     |     118,035 |    241,095 | 104,423,692.40 |            0.00 | 104,423,692.40 |
+| Discounted      |       3,282 |     33,819 |   5,950,196.91 |      527,507.93 |   5,422,689.00 |
+
+### Key Observations
+
+* Approximately **97.3%** of sales lines were recorded without a discount.
+* Discounted sales lines represented approximately **2.7%** of all sales lines.
+* Discounted sales lines generated approximately **5.42M** in net sales.
+* The total calculated discount amount across discounted sales lines was approximately **527.5K**.
+* Net sales varied across discount levels without showing a consistent monotonic pattern.
+* Some sales orders contain multiple discount levels, so classifying an entire order by its maximum discount would not provide a reliable representation of order-level discount behavior.
+
+### Business Interpretation
+
+Discounts represent a relatively small portion of sales-line activity in the analyzed dataset.
+
+The analysis identifies differences in sales volume and revenue across discount levels, but these patterns should be interpreted descriptively. The available data does not establish that applying a particular discount level caused sales to increase or decrease.
+
+Further analysis would be required to evaluate discount effectiveness, including product mix, timing, customer characteristics, and other contextual factors.
+
+---
+
+## 8. Initial Business Implications
+
+Based on the completed descriptive analysis, several areas should receive further investigation:
 
 ### 1. Sales Trend Investigation
 
@@ -160,17 +255,21 @@ Based on the current analysis, several areas should receive further investigatio
 * Segment customers based on revenue, order frequency, and purchasing behavior.
 * Examine whether high-revenue customers also demonstrate high purchase frequency.
 
-### 5. Further Analysis Required
+### 5. Territory Analysis
 
-* Territory performance
-* Discount and sales-volume relationships
-* Additional customer behavior analysis
+* Investigate the differences between high-revenue and high-order-volume territories.
+* Examine the characteristics of territories with unusually high Average Order Values.
 
-These areas should be investigated before developing final business recommendations.
+### 6. Discount Analysis
+
+* Investigate the product and customer mix associated with discounted sales.
+* Examine whether discount usage is concentrated in specific products, categories, territories, or periods.
+
+These areas should be investigated further before developing final business recommendations.
 
 ---
 
-## 7. Analysis Limitations
+## 9. Analysis Limitations
 
 The current insights are based on descriptive analysis of the AdventureWorks2022 transactional dataset.
 
@@ -179,9 +278,10 @@ The analysis does not establish causal relationships.
 In particular:
 
 * Revenue is analyzed using sales transaction values and does not represent profitability.
-* Discount-related sales patterns have not yet been analyzed.
-* Territory performance has not yet been analyzed.
+* Discount analysis describes sales patterns across discount levels but does not measure causal discount effectiveness.
+* Territory analysis describes differences in sales performance but does not explain their underlying causes.
 * External market conditions and business context are not included.
 * The observed 2014 decline should not be attributed to a specific cause without further analysis.
 * Product-level revenue concentration has not been formally quantified using a cumulative revenue or revenue-share analysis.
 * Customer revenue concentration is based on cumulative sales revenue and should not be interpreted as profit concentration.
+* Discount analysis is performed at the sales-line level because some orders contain multiple discount levels.
