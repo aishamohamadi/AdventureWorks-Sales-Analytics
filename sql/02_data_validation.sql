@@ -101,3 +101,17 @@ LEFT JOIN Sales.SalesOrderHeader AS h
     ON d.SalesOrderID = h.SalesOrderID
 
 WHERE h.SalesOrderID IS NULL;
+
+
+-- =====================================================
+-- Customer Count Check
+-- Purpose: Compare customer master records with
+-- customers appearing in sales orders.
+-- =====================================================
+
+SELECT
+    (SELECT COUNT(*)
+     FROM Sales.Customer) AS TotalCustomerRecords,
+
+    (SELECT COUNT(DISTINCT CustomerID)
+     FROM Sales.SalesOrderHeader) AS CustomersWithSales;

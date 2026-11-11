@@ -547,3 +547,47 @@ GROUP BY
 
 ORDER BY
     DiscountStatus;
+
+
+-- =====================================================
+-- Question 6E: Discount Patterns by Product Category
+-- =====================================================
+
+SELECT
+    pc.Name AS ProductCategory,
+    psc.Name AS ProductSubcategory,
+    COUNT(*) AS SalesLines,
+    SUM(sod.OrderQty) AS UnitsSold,
+
+    SUM(sod.LineTotal / NULLIF(1 - sod.UnitPriceDiscount, 0))
+        AS GrossSales,
+
+    SUM(
+        (sod.LineTotal / NULLIF(1 - sod.UnitPriceDiscount, 0))
+        * sod.UnitPriceDiscount
+    ) AS DiscountAmount,
+
+    SUM(sod.LineTotal) AS NetSales,
+
+    CAST(
+        100.0 * COUNT(CASE
+            WHEN sod.UnitPriceDiscount > 0 THEN 1
+        END) / NULLIF(COUNT(*), 0)
+        AS DECIMAL(10,2)
+    ) AS DiscountedLinePct
+
+FROM Sales.SalesOrderDetail AS sod
+INNER JOIN Production.Product AS p
+    ON sod.ProductID = p.ProductID
+INNER JOIN Production.ProductSubcategory AS psc
+    ON p.ProductSubcategoryID = psc.ProductSubcategoryID
+INNER JOIN Production.ProductCategory AS pc
+    ON psc.ProductCategoryID = pc.ProductCategoryID
+
+GROUP BY
+    pc.Name,
+    psc.Name
+
+ORDER BY
+    DiscountedLinePct DESC,
+    NetSales DESC;

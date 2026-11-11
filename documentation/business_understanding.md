@@ -12,6 +12,8 @@ The objective of this project is to analyze sales performance using the Adventur
 
 The analysis focuses on sales performance across products, product categories and subcategories, customers, sales territories, discounts, and time.
 
+The project combines SQL-based analysis with Power BI visualization to provide a structured view of the available sales data.
+
 ---
 
 ## 2. Business Problem
@@ -26,15 +28,15 @@ The available transactional data contains information about sales orders, order 
 * How does sales performance vary across territories?
 * How are discounts associated with sales volume and revenue?
 
-This project aims to transform the available transactional data into structured analysis and evidence-based business insights that can support sales and commercial decision-making.
+This project transforms the available transactional data into structured analysis and evidence-based business insights that can support a clearer understanding of sales and commercial performance.
 
 ---
 
 ## 3. Project Objective
 
-The main objective is to analyze historical sales performance, identify important revenue patterns and concentration areas, and provide evidence-based business insights.
+The main objective is to analyze historical sales performance, identify important revenue patterns and concentration areas, and communicate evidence-based business insights.
 
-The analysis uses SQL Server and T-SQL for data exploration, validation, transformation, and analytical querying. Validated results are then documented as business insights and will support subsequent visualization and presentation.
+The project uses SQL Server and T-SQL for data exploration, validation, and analytical querying. The resulting findings are documented and presented through a Power BI dashboard.
 
 The project examines:
 
@@ -45,7 +47,7 @@ The project examines:
 * Sales territory performance
 * Discount-related sales patterns
 
-Business recommendations will be developed only after the relevant analyses have been completed and validated.
+Business implications are discussed based on the completed analytical findings, while avoiding conclusions that are not supported by the available data.
 
 ---
 
@@ -93,7 +95,7 @@ How does sales performance vary across sales territories?
 
 ### Q6 — Discount-Related Sales Patterns
 
-How are discounts associated with sales volume and revenue?
+How are discounts associated with sales volume and revenue, and how does discount usage vary across product subcategories?
 
 **Status:** Analyzed
 
@@ -121,6 +123,8 @@ How are discounts associated with sales volume and revenue?
 * Customer revenue concentration
 * Territory performance
 * Discount-related sales patterns
+* SQL-based data exploration and validation
+* Power BI sales performance visualization
 
 ### Out of Scope
 
@@ -135,33 +139,38 @@ How are discounts associated with sales volume and revenue?
 
 ## 6. Expected Business Outcomes
 
-The analysis is expected to identify:
+The completed analysis provides:
 
-* High-revenue and high-volume products
-* High-revenue product categories and subcategories
-* High-value customers
-* Customer revenue concentration patterns
-* Important sales trends
-* Territory performance differences
-* Discount-related sales patterns
-* Potential areas for further commercial investigation
+* Identification of high-revenue and high-volume products
+* Comparison of product category and subcategory performance
+* Identification of high-value customers
+* Measurement of customer revenue concentration
+* Analysis of sales trends across the observed period
+* Comparison of sales performance across territories
+* Examination of discount usage across sales lines and product subcategories
+* A Power BI dashboard presenting the main sales performance indicators
 
-The final business recommendations will be based on validated analytical findings rather than assumptions made before examining the data.
+The findings also highlight areas that may require further commercial investigation, without treating descriptive patterns as proven causes or business recommendations.
 
 ---
 
 ## 7. Analysis Status
 
-The project is being developed incrementally.
+The core descriptive sales analysis has been completed.
 
-### Completed Analysis
+### Completed Work
 
-* Sales performance over time
-* Product performance
-* Product category and subcategory performance
-* Customer performance
-* Customer revenue concentration
-* Territory performance
-* Discount-related sales patterns
+* Database exploration and schema inspection
+* Primary and foreign key identification
+* Data validation and referential integrity checks
+* Sales performance analysis over time
+* Product performance analysis
+* Product category and subcategory analysis
+* Customer performance and revenue concentration analysis
+* Territory performance analysis
+* Discount-related sales analysis
+* Discount analysis by product subcategory
+* Documentation of business insights
+* Development of a Power BI sales overview dashboard
 
-The core descriptive sales analysis is now complete. Further work will focus on consolidating validated insights, documenting business implications, and preparing the project for presentation and visualization.
+The project combines validated SQL analysis, documented findings, and an interactive Power BI dashboard to present the main patterns identified in the AdventureWorks2022 sales data.
